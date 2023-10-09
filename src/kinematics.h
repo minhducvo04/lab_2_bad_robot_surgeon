@@ -27,6 +27,7 @@ BLA::Matrix<3> forward_kinematics(const BLA::Matrix<3> &joint_angles, const Kine
       Call each transformation helper function together in this FK function, returning the cartesian coordinates in x, y, z
       Return: 3x1 Vector (BLA::Matrix<3,1>) for the x, y, z cartesian coordinates
   */ 
+  return BLA::Matrix<3>(0, 0, 0);
 }
 
 BLA::Matrix<3> inverse_kinematics(const BLA::Matrix<3> &target_location, const KinematicsConfig &config)
