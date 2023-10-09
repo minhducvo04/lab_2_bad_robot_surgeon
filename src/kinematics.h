@@ -10,49 +10,6 @@ struct KinematicsConfig
   float l3;
 };
 
-// returns a rotation matrix about x according to angle theta
-BLA::Matrix<3,3> rot_mat_x(double theta) {
-  BLA::Matrix<3, 3> rot_x = {1,
-                          0,
-                          0,
-                          0,
-                          cos(theta),
-                          -sin(theta),
-                          0,
-                          sin(theta),
-                          cos(theta)};
-  return rot_x;
-}
-
-// returns a rotation matrix about y according to angle theta
-BLA::Matrix<3,3> rot_mat_y(double theta) {
-  BLA::Matrix<3, 3> rot_y = {cos(theta),
-                            0,
-                            sin(theta),
-                            0,
-                            1,
-                            0,
-                            -sin(theta),
-                            0,
-                            cos(theta)};
-
-  return rot_y;
-}
-
-// returns a rotation matrix about z according to angle theta
-BLA::Matrix<3,3> rot_mat_z(float theta) {
-  BLA::Matrix<3, 3> rot_z = {cos(theta),
-                            -sin(theta),
-                            0,
-                            sin(theta),
-                            cos(theta),
-                            0,
-                            0,
-                            0,
-                            1};
-  return rot_z;
-}
-
 // TODO: Step 12. Implement forward kinematics
 BLA::Matrix<3> forward_kinematics(const BLA::Matrix<3> &joint_angles, const KinematicsConfig &config)
 {
@@ -61,6 +18,14 @@ BLA::Matrix<3> forward_kinematics(const BLA::Matrix<3> &joint_angles, const Kine
   // Returns the cartesian coordinates of the end-effector 
   // corresponding to the given joint angles and leg configuration. 
   // */
+
+  /* Suggested Implementation
+      Refer to Slide 38 in the FK Lecture Slides
+      Create helper functions to perform a rotation and translation together
+        Parameters: theta, x, y, z
+        Return: 4x4 Matrix for the corresponding translation
+      Call each transformation helper function together in this FK function, returning the cartesian coordinates in x, y, z
+  */ 
 }
 
 BLA::Matrix<3> inverse_kinematics(const BLA::Matrix<3> &target_location, const KinematicsConfig &config)

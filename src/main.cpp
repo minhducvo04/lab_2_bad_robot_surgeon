@@ -143,8 +143,8 @@ void loop()
       Serial.println("");
     }
 
-    // PART TWO: Forward Kinematics
-    // Uncomment this block when starting the forward kinematics part. This for loop gets the actuator angles for each motor
+    //PART TWO: Forward Kinematics
+    //Uncomment this block when starting the forward kinematics part. This for loop gets the actuator angles for each motor
     // for (int i = 0; i < 3; i++)
     // {
     //   actuator_angles(i) = bus_front.Get(i).Position();
@@ -160,7 +160,7 @@ void loop()
     // In the for loop from Step 14, command one arm to oscillate every cycle to create haptic feedback
     // HINT: use the flip variable to alternate the current one very cycle of the control loop
 
-    // Sanitizes the current for safety, leave as is
+    // Sanitizes the currents for safety, leave as is
     actuator_commands = vectorized_sanitize(actuator_commands,
                                             actuator_angles,
                                             actuator_velocities,
