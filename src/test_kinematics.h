@@ -22,18 +22,18 @@ void test_neutral()
   auto r = forward_kinematics(joint_angles, config);
   assert_close(r(0), 0.0);
   assert_close(r(1), 0.5);
-  assert_close(r(2), -2.0);
+  assert_close(r(2), 2.0);
 }
 
 void test_bent()
 {
   auto config = KinematicsConfig{0.5, 1.0, 1.0};
-  auto joint_angles = BLA::Matrix<3>(0, PI / 4, -PI / 2);
+  auto joint_angles = BLA::Matrix<3>(0, PI / 4, PI / 2);
   Serial << "Testing kinematics for joint angles = " << joint_angles << "\n";
   auto r = forward_kinematics(joint_angles, config);
   assert_close(r(0), 0.0);
   assert_close(r(1), 0.5);
-  assert_close(r(2), -sqrt(2.0));
+  assert_close(r(2), sqrt(2.0));
 }
 
 void test_outward()
@@ -41,10 +41,11 @@ void test_outward()
   auto config = KinematicsConfig{0.5, 1.0, 1.0};
   auto joint_angles = BLA::Matrix<3>(PI / 2, 0, 0);
   Serial << "Testing kinematics for joint angles = " << joint_angles << "\n";
-  auto r = forward_kinematics(joint_angles, config);
-  assert_close(r(0), 0.0);
-  assert_close(r(1), 2.0);
-  assert_close(r(2), 0.5);
+  auto r = forward_kinematics(joint_angles, config); 
+
+  assert_close(r(0), -0.5);
+  assert_close(r(1), 0.0);
+  assert_close(r(2), 2.0);
 }
 
 void test_kinematics()
