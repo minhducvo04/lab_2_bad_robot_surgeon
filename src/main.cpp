@@ -7,7 +7,6 @@
 #include "test_kinematics.h"
 #include "utils.h"
 
-/*********** STUDENT CONFIGURATION NECESSARY *************/
 // Examine your robot leg to see if you built a left leg or a right leg.
 // Then replace kUnspecified with the correct side.
 const BodySide kLegSide = BodySide::kUnspecified; // Replace with BodySide::kLeft or BodySide::kRight
