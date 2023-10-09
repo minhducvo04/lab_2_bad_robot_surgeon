@@ -13,18 +13,19 @@ struct KinematicsConfig
 // TODO: Step 12. Implement forward kinematics
 BLA::Matrix<3> forward_kinematics(const BLA::Matrix<3> &joint_angles, const KinematicsConfig &config)
 {
-  // /* Computes forward kinematics for the 3DOF robot arm/leg.
+  /* Computes forward kinematics for the 3DOF robot arm/leg.
   
-  // Returns the cartesian coordinates of the end-effector 
-  // corresponding to the given joint angles and leg configuration. 
-  // */
+  Returns the cartesian coordinates of the end-effector corresponding to the given joint angles and leg configuration. 
+  */
 
   /* Suggested Implementation
       Refer to Slide 38 in the FK Lecture Slides
+      Parameters: Joint angles for each motor, config for the joint offsets
       Create helper functions to perform a rotation and translation together
         Parameters: theta, x, y, z
-        Return: 4x4 Matrix for the corresponding translation
+        Return: 4x4 Matrix for the corresponding translation (homogeneous coordinates)
       Call each transformation helper function together in this FK function, returning the cartesian coordinates in x, y, z
+      Return: 3x1 Vector (BLA::Matrix<3,1>) for the x, y, z cartesian coordinates
   */ 
 }
 
