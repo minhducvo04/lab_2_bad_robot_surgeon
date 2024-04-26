@@ -119,7 +119,7 @@ void loop()
       updateState(&back_state[i], i, 0);
     }
     for(int i = 0; i < 3; i++){
-      updateCmd(&back_state[i], sin(time), Kp, Kd);
+      updateCmd(&back_state[i], front_state[i].pos, Kp, Kd);
     }
     for(int i = 0; i < 3; i++){
       updateState(&front_state[i], i, 1);
@@ -155,14 +155,14 @@ void loop()
     }
 
     //PART TWO: Forward Kinematics
-    //Uncomment this block when starting the forward kinematics part. This for loop gets the actuator angles for each motor
-    // for (int i = 0; i < 3; i++)
-    // {
-    //   actuator_angles(i) = bus_front.Get(i).Position();
-    //   actuator_velocities(i) = bus_front.Get(i).Velocity();
-    // }
-    // BLA::Matrix<3> cartesian_coordinates = forward_kinematics(actuator_angles, pupper_leg_config); // This line finds the cartesian coordinates from the forward kinematics function
-    // print_vector(cartesian_coordinates); // use the print_vector functin to cleanly print out the cartesian coordinates
+    // Uncomment this block when starting the forward kinematics part. This for loop gets the actuator angles for each motor
+    for (int i = 0; i < 3; i++)
+    {
+      actuator_angles(i) = bus_front.Get(i).Position();
+      actuator_velocities(i) = bus_front.Get(i).Velocity();
+    }
+    BLA::Matrix<3> cartesian_coordinates = forward_kinematics(actuator_angles, pupper_leg_config); // This line finds the cartesian coordinates from the forward kinematics function
+    print_vector(cartesian_coordinates); // use the print_vector functin to cleanly print out the cartesian coordinates
 
     // TODO: Step 14. Create a Safety Box
     // Check if the cartesian coordinates are outside a box you determine. If outside, print OUTSIDE SAFETY BOX

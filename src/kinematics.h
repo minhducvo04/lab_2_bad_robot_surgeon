@@ -9,6 +9,20 @@ struct KinematicsConfig
   float l2;
   float l3;
 };
+BLA::Matrix<4,4> rotation(const float theta, const float x, const float y, const float z){
+  BLA::Matrix<4,4> translationalMatrix = {1,0,0,x,
+                                          0,1,0,y,
+                                          0,0,1,z,
+                                          0,0,0,1};
+  BLA::Matrix<4,4> rotationalMatrix = {cos(PI + theta), -sin(PI + theta), 0, 0,
+                                        sin(PI + theta), cos(PI + theta), 0 , 0,
+                                        0,0,1,0,
+                                        0,0,0,1};
+
+  BLA::Matrix<4,4> matrixT = translationalMatrix * rotationalMatrix;
+
+  return matrixT;
+}
 
 // TODO: Step 12. Implement forward kinematics
 BLA::Matrix<3> forward_kinematics(const BLA::Matrix<3> &joint_angles, const KinematicsConfig &config)
@@ -27,7 +41,8 @@ BLA::Matrix<3> forward_kinematics(const BLA::Matrix<3> &joint_angles, const Kine
       Call each transformation helper function together in this FK function, returning the cartesian coordinates in x, y, z
       Return: 3x1 Vector (BLA::Matrix<3,1>) for the x, y, z cartesian coordinates
   */ 
-  return BLA::Matrix<3>(0, 0, 0);
+  // T = transla
+  // return BLA::Matrix<3>(0, 0, 0);
 }
 
 BLA::Matrix<3> inverse_kinematics(const BLA::Matrix<3> &target_location, const KinematicsConfig &config)
