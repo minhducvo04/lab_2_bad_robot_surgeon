@@ -9,10 +9,10 @@
 
 // Examine your robot leg to see if you built a left leg or a right leg.
 // Then replace kUnspecified with the correct side.
-const BodySide kLegSide = BodySide::kUnspecified; // Replace with BodySide::kLeft or BodySide::kRight
+const BodySide kLegSide = BodySide::kLeft; // Replace with BodySide::kLeft or BodySide::kRight
 /*********************************************************/
 
-#define DO_TESTS = // comment out to skip running tests before executing main program
+// #define DO_TESTS = // comment out to skip running tests before executing main program
 
 long last_command = 0; // To keep track of when we last commanded the motors
 C610Bus<CAN1> bus_front;     // Initialize the Teensy's CAN bus to talk to the motors
@@ -36,9 +36,9 @@ BLA::Matrix<3> actuator_angles{0, 0, 0};     // rad
 BLA::Matrix<3> actuator_velocities{0, 0, 0}; // rad/s
 BLA::Matrix<3> actuator_commands{0, 0, 0};   // mA
 
-const float Kp = 2000;
-const float Kd = 100;
-const float kMaxCurrent = 3000;
+const float Kp = 1000;
+const float Kd = 500;
+const float kMaxCurrent = 2000;
 
 // Define the signed hip offset and link lengths
 const KinematicsConfig pupper_leg_config = (kLegSide == BodySide::kLeft) ? KinematicsConfig{0.035, 0.08, 0.11} : KinematicsConfig{-0.035, 0.08, 0.11};
@@ -114,7 +114,19 @@ void loop()
     // PART ONE: Bad Robot Surgeon
     // TODO: Steps 1.5, 6, 9, 10. update all the motor states according to their ID, indexed at 0
     // HINT: Use the updateState and updateCmd functions similar to lab 1. Remember that there are both a front and a back CAN bus.
-    
+    float time = millis() / 1000.0; // millis() returns the time in milliseconds since start of program
+    for(int i = 0; i < 3; i++){
+      updateState(&back_state[i], i, 0);
+    }
+    for(int i = 0; i < 3; i++){
+      updateCmd(&back_state[i], sin(time), Kp, Kd);
+    }
+    for(int i = 0; i < 3; i++){
+      updateState(&front_state[i], i, 1);
+    }
+    for(int i = 0; i < 3; i++){
+      updateCmd(&front_state[i], sin(time), Kp, Kd);
+    }
     // Sanitizes your computed current commands to make the robot safer. Use this for all parts, leave as is.
     for (int i = 0; i < 3; i++) {
       sanitize_current_command(back_state[i].cmd, back_state[i].pos, back_state[i].vel); // sanitize right leg commands
