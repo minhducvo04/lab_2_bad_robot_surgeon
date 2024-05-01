@@ -39,7 +39,7 @@ BLA::Matrix<3> actuator_commands{0, 0, 0};   // mA
 const float Kp = 1000;
 const float Kd = 500;
 const float kMaxCurrent = 2000;
-
+// BLA::Matrix<3> L{3,8.5,11.75};
 // Define the signed hip offset and link lengths
 const KinematicsConfig pupper_leg_config = (kLegSide == BodySide::kLeft) ? KinematicsConfig{0.035, 0.08, 0.11} : KinematicsConfig{-0.035, 0.08, 0.11};
 

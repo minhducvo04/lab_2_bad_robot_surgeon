@@ -5,33 +5,52 @@
 
 struct KinematicsConfig
 {
-  float l1;
-  float l2;
-  float l3;
+  float l[3];
 };
-BLA::Matrix<4,4> rotation(const float theta, const float x, const float y, const float z){
-  BLA::Matrix<4,4> translationalMatrix = {1,0,0,x,
-                                          0,1,0,y,
-                                          0,0,1,z,
-                                          0,0,0,1};
-  BLA::Matrix<4,4> rotationalMatrix = {cos(PI + theta), -sin(PI + theta), 0, 0,
-                                        sin(PI + theta), cos(PI + theta), 0 , 0,
-                                        0,0,1,0,
-                                        0,0,0,1};
 
-  BLA::Matrix<4,4> matrixT = translationalMatrix * rotationalMatrix;
+BLA::Matrix<3,3> translation(const float x, const float y, const float z){
+  BLA::Matrix<3,3> translationalMatrix = {1,0,x,
+                                          0,1,y,
+                                          0,0,z};
+  // BLA::Matrix<3,3> rotationalMatrix = {cos(PI + theta), 0, -sin(PI + theta),
+  //                                       0,1,0,
+  //                                       sin(PI + theta), 0, cos(PI + theta)};
 
-  return matrixT;
+  // BLA::Matrix<3,3> matrixT = translationalMatrix * rotationalMatrix;
+
+  return translationalMatrix;
+}
+
+BLA::Matrix<3,3> rotation(const float theta){
+  BLA::Matrix<3,3> rotationalMatrix = {cos(PI + theta), 0, -sin(PI + theta),
+                                        0,1,0,
+                                        sin(PI + theta), 0, cos(PI + theta)};
+  // BLA::Matrix<3,3> matrixT = translationalMatrix * rotationalMatrix;
+
+  return rotationalMatrix;
 }
 
 // TODO: Step 12. Implement forward kinematics
+//, float x, float y, float z)
 BLA::Matrix<3> forward_kinematics(const BLA::Matrix<3> &joint_angles, const KinematicsConfig &config)
+
 {
   /* Computes forward kinematics for the 3DOF robot arm/leg.
   
   Returns the cartesian coordinates of the end-effector corresponding to the given joint angles and leg configuration. 
   */
-
+  float x = 0;
+  float y = 0;
+  float z = 0;
+  BLA::Matrix<3,3> T = translation(x, y, z);
+  for(int i = 1; i <= sizeof(config) - 1; i++){
+    BLA::Matrix <3,3> trans = translation(0, config.l[i - 1], 1);
+    BLA::Matrix <3,3> rot = rotation(joint_angles(i));
+    T = T * trans * rot;
+  }
+  BLA::Matrix<3> temp = {0, config.l[sizeof(config) - 1], 1};
+  BLA::Matrix<3> pos = T * temp;
+  return pos;
   /* Suggested Implementation
       Refer to Slide 38 in the FK Lecture Slides
       Parameters: Joint angles for each motor, config for the joint offsets
