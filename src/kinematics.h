@@ -1,6 +1,7 @@
 #pragma once
 #include <BasicLinearAlgebra.h>
 #include "utils.h"
+// #include <stdio.h>
 struct KinematicsConfig
 {
   float l[3];
@@ -60,17 +61,21 @@ BLA::Matrix<3> forward_kinematics(const BLA::Matrix<3> &joint_angles, const Kine
   // float y = 0;
   // float z = 0;
   BLA::Matrix<3> T = translation(config.l[2], 'z');
-  for(int i = sizeof(config) - 2; i >= 0; i--){
-    // BLA::Matrix <3> trans = translation(config.l[i], 'z');
-    // BLA::Matrix <3,3> rot = rotation(joint_angles(i), 'y');
-    T = rotation(T, joint_angles(i + 1), 'y');
-    if(i){
-      T = translation(config.l[i], 'z') + T;
-    }
-    else{
-      T = translation(config.l[i], 'y') + T;
-    }
-  }
+  T = rotation(T, joint_angles(2), 'y');
+  T = translation(config.l[1], 'z') + T;
+  T = rotation(T, -joint_angles(1), 'y');
+  T = translation(config.l[0], 'y') + T;
+  // for(int i = sizeof(config) - 2; i >= 0; i--){
+  //   // BLA::Matrix <3> trans = translation(config.l[i], 'z');
+  //   // BLA::Matrix <3,3> rot = rotation(joint_angles(i), 'y');
+  //   T = rotation(T, joint_angles(i + 1), 'y');
+  //   if(i){
+  //     T = translation(config.l[i], 'z') + T;
+  //   }
+  //   else{
+  //     T = translation(config.l[i], 'y') + T;
+  //   }
+  // }
   T = rotation(T, joint_angles(0), 'z');
   // BLA::Matrix<3> temp = {0, config.l[sizeof(config) - 1], 1};
   // BLA::Matrix<3> pos = T * temp;
@@ -104,3 +109,10 @@ BLA::Matrix<3> correct_for_actuator_direction(const BLA::Matrix<3> &joint_vector
 {
   return {joint_vector(0), joint_vector(1), joint_vector(2)};
 }
+
+// int main(){
+//   const KinematicsConfig test_config = KinematicsConfig{0.035, 0.08, 0.11};
+//   const BLA::Matrix<3> test_angle = {0, 0, 0};
+//   // forward_kinematics()
+//   printf("%f", test_angle(0));
+// }

@@ -161,36 +161,44 @@ void loop()
     // Uncomment this block when starting the forward kinematics part. This for loop gets the actuator angles for each motor
     for (int i = 0; i < 3; i++)
     {
-      actuator_angles(i) = bus_front.Get(i).Position();
+      actuator_angles(i) = bus_front.Get(i).Position() - 0.08;
       actuator_velocities(i) = bus_front.Get(i).Velocity();
     }
     BLA::Matrix<3> cartesian_coordinates = forward_kinematics(actuator_angles, pupper_leg_config); // This line finds the cartesian coordinates from the forward kinematics function
     print_vector(cartesian_coordinates); // use the print_vector functin to cleanly print out the cartesian coordinates
-    Serial.println(pupper_leg_config.l[0] >= 0.4);
-    print_vector(translation(pupper_leg_config.l[0], 'y'));
-    Serial.println("");
+    // Serial.println(pupper_leg_config.l[0] >= 0.4);
+    // print_vector(rotation(translation(pupper_leg_config.l[2], 'z'), actuator_angles(2), 'y'));
+    // Serial.println(actuator_angles(0));
+    // Serial.println(actuator_angles(1)); 
+    // Serial.println(actuator_angles(2));
     // TODO: Step 14. Create a Safety Box
     // Check if the cartesian coordinates are outside a box you determine. If outside, print OUTSIDE SAFETY BOX
-    float a = pupper_leg_config.l[1] + pupper_leg_config.l[2];
-    float b = pupper_leg_config.l[0];
+    // float a = pupper_leg_config.l[1] + pupper_leg_config.l[2];
+    // float b = pupper_leg_config.l[0];
+    // BLA::Matrix<3> safety_angle = {0.8, 0.8, 0.8};
+    // BLA::Matrix<3> safety_box = forward_kinematics(safety_angle, pupper_leg_config);
     bool unsafe = false;
-    BLA::Matrix<3> max_capacity = {sqrt(a * a + b * b), sqrt(a * a + b * b), b};
-    for(unsigned int i = 0; i < 3; i++){
-      if(abs(cartesian_coordinates(i)) > 0.8 * max_capacity(i)){
-        Serial.println("-----RUNNNNN!!!!! OUTSIDE SAFETY BOX-----");
-        unsafe = true;
-      }
+    // BLA::Matrix<3> max_capacity = {sqrt(a * a + b * b), sqrt(a * a + b * b), b};
+    // for(unsigned int i = 0; i < 3; i++){
+    if(abs(cartesian_coordinates(0)) > 0.06){
+      Serial.println("-----RUNNNNN!!!!! OUTSIDE SAFETY BOX-----");
+      unsafe = true;
     }
+    // }
+    
     float time = millis() / 1000.0; // millis() returns the time in milliseconds since start of program
     float target = sin(time);
     // TODO: Step 15. Do a safety dance if outside the safety bounds
     // In the for loop from Step 14, command one arm to oscillate every cycle to create haptic feedback
     // HINT: use the flip variable to alternate the current one very cycle of the control loop
-    // if(unsafe){
-    //   target = 0;
-    //   unsafe = false;
+    Serial.println(unsafe);
+    if(unsafe){
+      target = 0;
+      unsafe = false;
+    }
+    // else{
+    control(target);
     // }
-    // control(target);
     // Sanitizes the currents for safety, leave as is
     actuator_commands = vectorized_sanitize(actuator_commands,
                                             actuator_angles,
