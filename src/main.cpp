@@ -6,7 +6,7 @@
 #include "kinematics.h"
 #include "test_kinematics.h"
 #include "utils.h"
-
+#include "bits/stdc++.h"
 // Examine your robot leg to see if you built a left leg or a right leg.
 // Then replace kUnspecified with the correct side.
 const BodySide kLegSide = BodySide::kLeft; // Replace with BodySide::kLeft or BodySide::kRight
@@ -90,6 +90,29 @@ void setup()
 
 float flip = 1.0;
 
+void control(float target){
+  for(int i = 0; i < 3; i++){
+      updateState(&back_state[i], i, 0);
+    }
+    for(int i = 0; i < 3; i++){
+      updateCmd(&back_state[i], front_state[i].pos, Kp, Kd);
+    }
+    for(int i = 0; i < 3; i++){
+      updateState(&front_state[i], i, 1);
+    }
+    for(int i = 0; i < 3; i++){
+      updateCmd(&front_state[i], target, Kp, Kd);
+    }
+    // Sanitizes your computed current commands to make the robot safer. Use this for all parts, leave as is.
+    for (int i = 0; i < 3; i++) {
+      sanitize_current_command(back_state[i].cmd, back_state[i].pos, back_state[i].vel); // sanitize right leg commands
+      sanitize_current_command(front_state[i].cmd, front_state[i].pos, front_state[i].vel); // sanitize left leg commands
+    }
+    // this block commands the currents on both the front and back buses, leave as is.
+    bus_back.CommandTorques(back_state[0].cmd, back_state[1].cmd, back_state[2].cmd, 0 , C610Subbus::kOneToFourBlinks);
+    bus_front.CommandTorques(front_state[0].cmd, front_state[1].cmd, front_state[2].cmd, 0 , C610Subbus::kOneToFourBlinks);
+}
+
 void loop()
 {
   bus_back.PollCAN(); // Check for messages from the motors.
@@ -114,29 +137,9 @@ void loop()
     // PART ONE: Bad Robot Surgeon
     // TODO: Steps 1.5, 6, 9, 10. update all the motor states according to their ID, indexed at 0
     // HINT: Use the updateState and updateCmd functions similar to lab 1. Remember that there are both a front and a back CAN bus.
-    float time = millis() / 1000.0; // millis() returns the time in milliseconds since start of program
-    for(int i = 0; i < 3; i++){
-      updateState(&back_state[i], i, 0);
-    }
-    for(int i = 0; i < 3; i++){
-      updateCmd(&back_state[i], front_state[i].pos, Kp, Kd);
-    }
-    for(int i = 0; i < 3; i++){
-      updateState(&front_state[i], i, 1);
-    }
-    for(int i = 0; i < 3; i++){
-      updateCmd(&front_state[i], sin(time), Kp, Kd);
-    }
-    // Sanitizes your computed current commands to make the robot safer. Use this for all parts, leave as is.
-    for (int i = 0; i < 3; i++) {
-      sanitize_current_command(back_state[i].cmd, back_state[i].pos, back_state[i].vel); // sanitize right leg commands
-      sanitize_current_command(front_state[i].cmd, front_state[i].pos, front_state[i].vel); // sanitize left leg commands
-    }
-
-    // this block commands the currents on both the front and back buses, leave as is.
-    bus_back.CommandTorques(back_state[0].cmd, back_state[1].cmd, back_state[2].cmd, 0 , C610Subbus::kOneToFourBlinks);
-    bus_front.CommandTorques(front_state[0].cmd, front_state[1].cmd, front_state[2].cmd, 0 , C610Subbus::kOneToFourBlinks);
-
+    
+    // CHECK control()
+  
     // Block for printing the motor positions of all the motors, leave as is.
     for (int i = 0; i < 3; i++) {
       if (i == 0) {
@@ -163,14 +166,31 @@ void loop()
     }
     BLA::Matrix<3> cartesian_coordinates = forward_kinematics(actuator_angles, pupper_leg_config); // This line finds the cartesian coordinates from the forward kinematics function
     print_vector(cartesian_coordinates); // use the print_vector functin to cleanly print out the cartesian coordinates
-
+    Serial.println(pupper_leg_config.l[0] >= 0.4);
+    print_vector(translation(pupper_leg_config.l[0], 'y'));
+    Serial.println("");
     // TODO: Step 14. Create a Safety Box
     // Check if the cartesian coordinates are outside a box you determine. If outside, print OUTSIDE SAFETY BOX
-    
+    float a = pupper_leg_config.l[1] + pupper_leg_config.l[2];
+    float b = pupper_leg_config.l[0];
+    bool unsafe = false;
+    BLA::Matrix<3> max_capacity = {sqrt(a * a + b * b), sqrt(a * a + b * b), b};
+    for(unsigned int i = 0; i < 3; i++){
+      if(abs(cartesian_coordinates(i)) > 0.8 * max_capacity(i)){
+        Serial.println("-----RUNNNNN!!!!! OUTSIDE SAFETY BOX-----");
+        unsafe = true;
+      }
+    }
+    float time = millis() / 1000.0; // millis() returns the time in milliseconds since start of program
+    float target = sin(time);
     // TODO: Step 15. Do a safety dance if outside the safety bounds
     // In the for loop from Step 14, command one arm to oscillate every cycle to create haptic feedback
     // HINT: use the flip variable to alternate the current one very cycle of the control loop
-
+    // if(unsafe){
+    //   target = 0;
+    //   unsafe = false;
+    // }
+    // control(target);
     // Sanitizes the currents for safety, leave as is
     actuator_commands = vectorized_sanitize(actuator_commands,
                                             actuator_angles,

@@ -25,23 +25,24 @@ BLA::Matrix<3> rotation(const BLA::Matrix<3> m, const float theta, const char ty
   // Output: Cartesian coordinate
   BLA::Matrix<3, 3> rot;
   if(type == 'x'){
-    BLA::Matrix<3, 3> rot = {1, 0, 0,
+    rot = {1, 0, 0,
             0, cos(theta), -sin(theta),
             0, sin(theta), cos(theta)};
   }
   else{
     if(type == 'y'){
-      BLA::Matrix<3, 3> rot =  {cos(theta), 0, -sin(theta),
+      rot =  {cos(theta), 0, -sin(theta),
                       0, 1, 0,
                       sin(theta), 0, cos(theta)};
     }
     else{
-      BLA::Matrix<3, 3> rot = {cos(theta), -sin(theta), 0,
+      rot = {cos(theta), -sin(theta), 0,
             sin(theta), cos(theta), 0,
             0, 0, 1};   
     }
   } 
-  return rot * m;                      
+  BLA::Matrix<3> ret = rot * m;
+  return ret;                      
 }
 
 // TODO: Step 12. Implement forward kinematics
