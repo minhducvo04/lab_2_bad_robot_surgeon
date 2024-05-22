@@ -1,7 +1,1 @@
-# Installation
-```bash
-git clone https://github.com/cs123-stanford/lab_2_bad_robot_surgeon_solutions.git
-cd lab_2_bad_robot_surgeon_solutions
-git submodule init
-git submodule update
-```
+This is a project in independent study at Foothill College. This course follows a course made by a Stanford club: https://cs-123-stanford-2023.readthedocs.io/en/latest/index.html
