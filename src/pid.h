@@ -12,7 +12,6 @@ float pd_control(float pos,
 {
   return -Kp * (pos - target) - Kd * vel;
 }
-
 template <int n>
 BLA::Matrix<n> vectorized_pd(const BLA::Matrix<n> &pos,
                              const BLA::Matrix<n> &vel,
